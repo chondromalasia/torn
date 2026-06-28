@@ -1,7 +1,7 @@
 import requests
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 API_KEY = os.environ.get("TORN_API_KEY") or input("Enter your Torn API key: ").strip()
 FACTION_ID = os.environ.get("TORN_FACTION_ID") or input("Enter enemy faction ID: ").strip()
@@ -181,7 +181,7 @@ def render_html(faction_name, members, generated_at):
 </head>
 <body>
   <h1>{faction_name}</h1>
-  <p class="meta">Updated: {generated_at} &nbsp;·&nbsp; Auto-refreshes every 5 minutes</p>
+  <p class="meta">Updated: {generated_at} TCT &nbsp;·&nbsp; Auto-refreshes every 5 minutes</p>
   <div class="stats">
     <div class="stat"><strong>{len(members)}</strong> Members</div>
     <div class="stat"><strong>{traveling}</strong> Traveling</div>
@@ -213,7 +213,7 @@ faction_name, raw_members = get_faction_members(API_KEY, FACTION_ID)
 members = [build_member(mid, mdata) for mid, mdata in raw_members.items()]
 members.sort(key=sort_key)
 
-generated_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 html = render_html(faction_name, members, generated_at)
 
 with open(OUTPUT_FILE, "w") as f:
