@@ -28,9 +28,24 @@ def build_member(member_id, member_data):
     description = status.get("description", "Unknown")
     until = status.get("until", 0)
 
+    HOSPITAL_DEMONYMS = {
+        "argentine":    "Argentina",
+        "argentinian":  "Argentina",
+        "british":      "United Kingdom",
+        "canadian":     "Canada",
+        "caymanian":    "Cayman Islands",
+        "chinese":      "China",
+        "hawaiian":     "Hawaii",
+        "japanese":     "Japan",
+        "mexican":      "Mexico",
+        "south african":"South Africa",
+        "swiss":        "Switzerland",
+        "emirati":      "UAE",
+    }
+
     destination = "Torn"
+    desc_lower = description.lower()
     if state in ("Traveling", "Abroad"):
-        desc_lower = description.lower()
         if "to torn" in desc_lower:
             destination = "Torn"
         elif desc_lower.startswith("traveling from torn to "):
@@ -41,6 +56,12 @@ def build_member(member_id, member_data):
             destination = description[len("in "):].strip()
         else:
             destination = description
+    elif state == "Hospital":
+        if "in a " in desc_lower and " hospital" in desc_lower:
+            start = desc_lower.index("in a ") + len("in a ")
+            end = desc_lower.index(" hospital", start)
+            demonym = description[start:end].strip().lower()
+            destination = HOSPITAL_DEMONYMS.get(demonym, description[start:end].strip())
 
     if state == "Traveling" and until:
         now = datetime.now().timestamp()
