@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="300">
+  <title>Grim Cartel — Torn Tracker</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      padding: 24px;
+    }
+    h1 { font-size: 1.4rem; font-weight: 600; margin-bottom: 4px; }
+    .meta { color: #94a3b8; font-size: 0.85rem; margin-bottom: 20px; }
+    .stats { display: flex; gap: 16px; margin-bottom: 20px; }
+    .stat {
+      background: #1e293b;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+    .stat strong { display: block; font-size: 1.3rem; color: #e2e8f0; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      text-align: left;
+      padding: 8px 12px;
+      color: #64748b;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #1e293b;
+      cursor: pointer;
+      user-select: none;
+    }
+    thead th:after { content: ''; margin-left: 6px; }
+    thead th[aria-sort="ascending"]:after { content: '▲'; }
+    thead th[aria-sort="descending"]:after { content: '▼'; }
+    thead th.no-sort { cursor: default; }
+    tbody tr { border-bottom: 1px solid #1e293b; }
+    tbody tr:hover { background: #1e293b; }
+    td { padding: 10px 12px; }
+    a { color: #93c5fd; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <h1>Grim Cartel</h1>
+  <p class="meta">Updated: 2026-06-28 13:42:55 &nbsp;·&nbsp; Auto-refreshes every 5 minutes</p>
+  <div class="stats">
+    <div class="stat"><strong>62</strong> Members</div>
+    <div class="stat"><strong>17</strong> Traveling</div>
+    <div class="stat"><strong>17</strong> Abroad</div>
+  </div>
+  <table id="members-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Level</th>
+        <th>State</th>
+        <th>Destination</th>
+        <th>Online</th>
+        <th>Last Action</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=884739" target="_blank">Rippe</a></td>
+          <td data-sort="85">85</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>Japan</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782653947">3 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=1937629" target="_blank">Sinister_Grim</a></td>
+          <td data-sort="100">100</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782654077">1 minute ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=2738253" target="_blank">GoDawgs</a></td>
+          <td data-sort="86">86</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>South Africa</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782648321">1 hour ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3057939" target="_blank">Nefarius_Grim</a></td>
+          <td data-sort="70">70</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#22c55e"></span>Online</td>
+          <td data-sort="1782654119">0 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3498737" target="_blank">labast</a></td>
+          <td data-sort="68">68</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>UAE</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782647011">1 hour ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3617287" target="_blank">Seductive_Grim</a></td>
+          <td data-sort="17">17</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>Canada</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782653153">17 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3669986" target="_blank">MilkiMoo</a></td>
+          <td data-sort="54">54</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782648448">1 hour ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3700329" target="_blank">Harlene</a></td>
+          <td data-sort="50">50</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782645849">2 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3718913" target="_blank">Jakkoll</a></td>
+          <td data-sort="52">52</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>UAE</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782651780">39 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3807228" target="_blank">Deggamer</a></td>
+          <td data-sort="37">37</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>South Africa</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782645309">2 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3920399" target="_blank">TWISTED-METAL</a></td>
+          <td data-sort="40">40</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>South Africa</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782646761">2 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3929283" target="_blank">Riven_Grim</a></td>
+          <td data-sort="25">25</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782642177">3 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4040765" target="_blank">Whiteshade</a></td>
+          <td data-sort="32">32</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>South Africa</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782653201">16 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4043157" target="_blank">DarkKnight2825</a></td>
+          <td data-sort="27">27</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782652268">31 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4044204" target="_blank">TheodoreMax</a></td>
+          <td data-sort="32">32</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>UAE</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782648746">1 hour ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4044666" target="_blank">Ninjazreader13</a></td>
+          <td data-sort="31">31</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782651666">41 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4209217" target="_blank">Wolf-boy</a></td>
+          <td data-sort="16">16</td>
+          <td><span class="badge" style="background:#f59e0b">Traveling</span></td>
+          <td>South Africa</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782645052">2 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3473683" target="_blank">Champ0001</a></td>
+          <td data-sort="25">25</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>Mexico</td>
+          <td><span class="dot" style="background:#22c55e"></span>Online</td>
+          <td data-sort="1782654164">0 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3455342" target="_blank">CommonBob</a></td>
+          <td data-sort="20">20</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>China</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782650710">57 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4043442" target="_blank">ConstantineLev</a></td>
+          <td data-sort="23">23</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>Mexico</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782605760">13 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3418749" target="_blank">D3XXCH3SS</a></td>
+          <td data-sort="29">29</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>Cayman Islands</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782641883">3 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3234014" target="_blank">KeriahMorgan</a></td>
+          <td data-sort="20">20</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>United Kingdom</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782597331">15 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3931500" target="_blank">Llamaa_Grim</a></td>
+          <td data-sort="46">46</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>Japan</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782645059">2 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4053825" target="_blank">LuluLemonade</a></td>
+          <td data-sort="32">32</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>United Kingdom</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782650144">1 hour ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3700261" target="_blank">Lunaska</a></td>
+          <td data-sort="50">50</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>South Africa</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782629408">6 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4245468" target="_blank">Mohamed_Sabra</a></td>
+          <td data-sort="26">26</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>South Africa</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782639055">4 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=2275132" target="_blank">MyraLynn</a></td>
+          <td data-sort="20">20</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>UAE</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782645966">2 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4044849" target="_blank">Odichan</a></td>
+          <td data-sort="27">27</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>Switzerland</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782649872">1 hour ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3668952" target="_blank">Qwerto</a></td>
+          <td data-sort="29">29</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>Argentina</td>
+          <td><span class="dot" style="background:#22c55e"></span>Online</td>
+          <td data-sort="1782654135">0 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4007074" target="_blank">Siuave</a></td>
+          <td data-sort="25">25</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>South Africa</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782644958">2 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3617799" target="_blank">TheStonedReaper</a></td>
+          <td data-sort="52">52</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>UAE</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782634321">5 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3676333" target="_blank">TrelawneyArwen</a></td>
+          <td data-sort="24">24</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>UAE</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782614623">10 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=2752611" target="_blank">Viciously_Grim</a></td>
+          <td data-sort="89">89</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>Cayman Islands</td>
+          <td><span class="dot" style="background:#f59e0b"></span>Idle</td>
+          <td data-sort="1782654057">1 minute ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4044870" target="_blank">habibithe1</a></td>
+          <td data-sort="30">30</td>
+          <td><span class="badge" style="background:#3b82f6">Abroad</span></td>
+          <td>Hawaii</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782622772">8 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4036713" target="_blank">8BitLucifer</a></td>
+          <td data-sort="26">26</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782645049">2 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4050712" target="_blank">Amas_Grim</a></td>
+          <td data-sort="40">40</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782652104">34 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3375522" target="_blank">Avaricious_Grim</a></td>
+          <td data-sort="41">41</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782653822">5 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3388784" target="_blank">AwokenMoss</a></td>
+          <td data-sort="38">38</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782636788">4 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3558511" target="_blank">Black-Starr</a></td>
+          <td data-sort="43">43</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782652505">27 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3792349" target="_blank">Dryice62</a></td>
+          <td data-sort="30">30</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782639945">3 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4042643" target="_blank">Edgy_Grim</a></td>
+          <td data-sort="20">20</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782646404">2 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4099742" target="_blank">FluffyStacks</a></td>
+          <td data-sort="32">32</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782639859">3 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=2228096" target="_blank">Grimulkin</a></td>
+          <td data-sort="71">71</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782617198">10 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4045048" target="_blank">Hastur_Grim</a></td>
+          <td data-sort="26">26</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782625045">8 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3507580" target="_blank">Jealousarow</a></td>
+          <td data-sort="15">15</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782628028">7 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3917245" target="_blank">KING_KS</a></td>
+          <td data-sort="30">30</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782455245">2 days ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=2022514" target="_blank">Lukeyboy300</a></td>
+          <td data-sort="40">40</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#f59e0b"></span>Idle</td>
+          <td data-sort="1782653685">8 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4040535" target="_blank">Math_Grim</a></td>
+          <td data-sort="20">20</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#f59e0b"></span>Idle</td>
+          <td data-sort="1782653242">15 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4349826" target="_blank">Mommie</a></td>
+          <td data-sort="9">9</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782648040">1 hour ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=1940938" target="_blank">Mythrial</a></td>
+          <td data-sort="21">21</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782630642">6 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4245764" target="_blank">Nordendal</a></td>
+          <td data-sort="19">19</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782652404">29 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3493773" target="_blank">Renix20</a></td>
+          <td data-sort="35">35</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#22c55e"></span>Online</td>
+          <td data-sort="1782654154">0 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3115280" target="_blank">Repac</a></td>
+          <td data-sort="40">40</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782651629">42 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4118035" target="_blank">Samurai30</a></td>
+          <td data-sort="19">19</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782653817">5 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4131180" target="_blank">ScryOne</a></td>
+          <td data-sort="22">22</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782639092">4 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3850010" target="_blank">Sinister_rybow</a></td>
+          <td data-sort="26">26</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782610797">12 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3437355" target="_blank">Tiuwilo</a></td>
+          <td data-sort="61">61</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#22c55e"></span>Online</td>
+          <td data-sort="1782654124">0 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4056319" target="_blank">UnoPeach</a></td>
+          <td data-sort="27">27</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782650162">1 hour ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3841443" target="_blank">Vixen_Grim</a></td>
+          <td data-sort="15">15</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#f59e0b"></span>Idle</td>
+          <td data-sort="1782652394">29 minutes ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3780709" target="_blank">WKD_TrapStar</a></td>
+          <td data-sort="35">35</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782629190">6 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=3952256" target="_blank">chknozar</a></td>
+          <td data-sort="26">26</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782640486">3 hours ago</td>
+        </tr>
+        <tr>
+          <td><a href="https://www.torn.com/profiles.php?XID=4051422" target="_blank">soch</a></td>
+          <td data-sort="22">22</td>
+          <td><span class="badge" style="background:#ef4444">Hospital</span></td>
+          <td>Torn</td>
+          <td><span class="dot" style="background:#6b7280"></span>Offline</td>
+          <td data-sort="1782588308">18 hours ago</td>
+        </tr>
+    </tbody>
+  </table>
+  <script src="https://cdn.jsdelivr.net/npm/tablesort@5.3.0/dist/tablesort.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tablesort@5.3.0/dist/sorts/tablesort.number.min.js"></script>
+  <script>new Tablesort(document.getElementById('members-table'));</script>
+</body>
+</html>
