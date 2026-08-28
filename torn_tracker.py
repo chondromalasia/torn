@@ -21,6 +21,15 @@ def get_faction_members(api_key, faction_id):
     return data.get("name", "Unknown Faction"), data.get("members", {})
 
 
+def format_duration(seconds):
+    seconds = max(0, int(seconds))
+    hours, rem = divmod(seconds, 3600)
+    mins, secs = divmod(rem, 60)
+    if hours:
+        return f"{hours}h {mins}m"
+    return f"{mins}m {secs}s"
+
+
 def build_member(member_id, member_data):
     status = member_data.get("status", {})
     last_action = member_data.get("last_action", {})
@@ -63,11 +72,10 @@ def build_member(member_id, member_data):
             demonym = description[start:end].strip().lower()
             destination = HOSPITAL_DEMONYMS.get(demonym, description[start:end].strip())
 
-    if state == "Traveling" and until:
+    if state in ("Traveling", "Hospital") and until:
         now = datetime.now().timestamp()
         time_left = max(0, int(until - now))
-        mins, secs = divmod(time_left, 60)
-        time_left_str = f"{mins}m {secs}s"
+        time_left_str = format_duration(time_left)
         eta_str = datetime.fromtimestamp(until).strftime("%H:%M:%S")
     else:
         time_left = 0
@@ -127,6 +135,7 @@ def render_html(faction_name, members, generated_at):
           <td data-sort="{m['level']}">{m['level']}</td>
           <td><span class="badge" style="background:{state_color}">{m['state']}</span></td>
           <td>{m['destination']}</td>
+          <td data-sort="{m['time_left']}">{m['time_left_str']}</td>
           <td><span class="dot" style="background:{online_color}"></span>{m['online']}</td>
           <td data-sort="{m['last_action_ts']}">{m['last_action']}</td>
         </tr>"""
@@ -215,6 +224,7 @@ def render_html(faction_name, members, generated_at):
         <th>Level</th>
         <th>State</th>
         <th>Destination</th>
+        <th>Time Left</th>
         <th>Online</th>
         <th>Last Action</th>
       </tr>
