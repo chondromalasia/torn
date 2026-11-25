@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Torn Tracker (Live)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0f172a; color: #e2e8f0; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; padding: 24px; }
+    h1 { font-size: 1.4rem; font-weight: 600; margin-bottom: 4px; }
+    .meta { color: #94a3b8; font-size: 0.85rem; margin-bottom: 20px; }
+    .meta.err { color: #f87171; }
+    .stats { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+    .stat { background: #1e293b; border-radius: 8px; padding: 10px 18px; font-size: 0.85rem; color: #94a3b8; }
+    .stat strong { display: block; font-size: 1.3rem; color: #e2e8f0; }
+    form.setup { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+    form.setup input { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; border-radius: 6px; padding: 8px 10px; font-size: 0.9rem; }
+    form.setup input[name=key] { width: 230px; }
+    form.setup input[name=faction] { width: 130px; }
+    button { background: #2563eb; border: 0; color: #fff; border-radius: 6px; padding: 8px 14px; font-size: 0.9rem; cursor: pointer; }
+    button.ghost { background: #1e293b; color: #94a3b8; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th { text-align: left; padding: 8px 12px; color: #64748b; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #1e293b; cursor: pointer; user-select: none; }
+    thead th[data-dir="1"]:after { content: ' ▲'; }
+    thead th[data-dir="-1"]:after { content: ' ▼'; }
+    tbody tr { border-bottom: 1px solid #1e293b; }
+    tbody tr:hover { background: #1e293b; }
+    td { padding: 10px 12px; }
+    a { color: #93c5fd; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; color: #fff; }
+    .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <h1 id="title">Torn Tracker (Live)</h1>
+  <p class="meta" id="meta">Enter an API key and enemy faction ID.</p>
+
+  <form class="setup" id="setup">
+    <input name="key" type="password" placeholder="Torn API key" autocomplete="off" required>
+    <input name="faction" type="text" placeholder="Faction ID" inputmode="numeric" required>
+    <button type="submit">Start</button>
+    <button type="button" class="ghost" id="clear">Forget key</button>
+  </form>
+
+  <div class="stats">
+    <div class="stat"><strong id="s-members">0</strong> Members</div>
+    <div class="stat"><strong id="s-travel">0</strong> Traveling</div>
+    <div class="stat"><strong id="s-abroad">0</strong> Abroad</div>
+    <div class="stat"><strong id="s-hosp">0</strong> Hospital</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th data-col="name">Name</th>
+        <th data-col="level">Level</th>
+        <th data-col="state">State</th>
+        <th data-col="destination">Destination</th>
+        <th data-col="until">Time Left</th>
+        <th data-col="online">Online</th>
+        <th data-col="last_action_ts">Last Action</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+const POLL_MS = 10000;   // API poll interval (Torn limit is ~100 req/min per key)
+const TICK_MS = 1000;    // countdown redraw interval
+
+const HOSPITAL_DEMONYMS = {
+  "argentine": "Argentina", "argentinian": "Argentina", "british": "United Kingdom",
+  "canadian": "Canada", "caymanian": "Cayman Islands", "chinese": "China",
+  "hawaiian": "Hawaii", "japanese": "Japan", "mexican": "Mexico",
+  "south african": "South Africa", "swiss": "Switzerland", "emirati": "UAE",
+};
+const STATE_COLORS = { Traveling: "#f59e0b", Abroad: "#3b82f6", Hospital: "#ef4444", Jail: "#8b5cf6", Okay: "#6b7280", Unknown: "#6b7280" };
+const ONLINE_COLORS = { Online: "#22c55e", Idle: "#f59e0b", Offline: "#6b7280" };
+
+const $ = (id) => document.getElementById(id);
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+  del(k) { try { localStorage.removeItem(k); } catch {} },
+};
+
+let members = [];
+let sortCol = null;   // null = default (travelers by time left, then abroad, then rest)
+let sortDir = 1;
+let pollTimer = null;
+let session = 0;      // bumped on every (re)start so stale polls are ignored
+
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function fmtDuration(sec) {
+  sec = Math.max(0, Math.floor(sec));
+  const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+  return h ? `${h}h ${m}m` : `${m}m ${s}s`;
+}
+
+function buildMember(id, d) {
+  const status = d.status || {}, la = d.last_action || {};
+  const state = status.state || "Unknown";
+  const description = status.description || "Unknown";
+  const dl = description.toLowerCase();
+  let destination = "Torn";
+
+  if (state === "Traveling" || state === "Abroad") {
+    if (dl.includes("to torn")) destination = "Torn";
+    else if (dl.startsWith("traveling from torn to ")) destination = description.slice("traveling from torn to ".length).trim();
+    else if (dl.startsWith("traveling to ")) destination = description.slice("traveling to ".length).trim();
+    else if (dl.startsWith("in ")) destination = description.slice(3).trim();
+    else destination = description;
+  } else if (state === "Hospital") {
+    const a = dl.indexOf("in a ");
+    if (a !== -1) {
+      const start = a + 5, end = dl.indexOf(" hospital", start);
+      if (end !== -1) {
+        const raw = description.slice(start, end).trim();
+        destination = HOSPITAL_DEMONYMS[raw.toLowerCase()] || raw;
+      }
+    }
+  }
+
+  return {
+    id, name: d.name || "Unknown", level: d.level ?? "?", state, description, destination,
+    until: (state === "Traveling" || state === "Hospital") ? (status.until || 0) : 0,
+    online: la.status || "Unknown", last_action: la.relative || "Unknown", last_action_ts: la.timestamp || 0,
+  };
+}
+
+const timeLeft = (m) => (m.until ? Math.max(0, m.until - Date.now() / 1000) : 0);
+
+function defaultOrder(a, b) {
+  const rank = (m) => (m.state === "Traveling" ? 0 : m.state === "Abroad" ? 1 : 2);
+  const ra = rank(a), rb = rank(b);
+  if (ra !== rb) return ra - rb;
+  if (ra === 0) return timeLeft(a) - timeLeft(b);
+  return a.name.localeCompare(b.name);
+}
+
+function sorted() {
+  const list = members.slice();
+  if (!sortCol) return list.sort(defaultOrder);
+  const val = (m) => (sortCol === "until" ? timeLeft(m) : m[sortCol]);
+  return list.sort((a, b) => {
+    const x = val(a), y = val(b);
+    const c = typeof x === "number" && typeof y === "number" ? x - y : String(x).localeCompare(String(y));
+    return c * sortDir;
+  });
+}
+
+function render() {
+  $("rows").innerHTML = sorted().map((m) => {
+    const sc = STATE_COLORS[m.state] || "#6b7280", oc = ONLINE_COLORS[m.online] || "#6b7280";
+    return `<tr>
+      <td><a href="https://www.torn.com/profiles.php?XID=${esc(m.id)}" target="_blank" rel="noopener">${esc(m.name)}</a></td>
+      <td>${esc(m.level)}</td>
+      <td><span class="badge" style="background:${sc}">${esc(m.state)}</span></td>
+      <td>${esc(m.destination)}</td>
+      <td>${m.until ? fmtDuration(timeLeft(m)) : "—"}</td>
+      <td><span class="dot" style="background:${oc}"></span>${esc(m.online)}</td>
+      <td>${esc(m.last_action)}</td>
+    </tr>`;
+  }).join("");
+
+  const count = (s) => members.filter((m) => m.state === s).length;
+  $("s-members").textContent = members.length;
+  $("s-travel").textContent = count("Traveling");
+  $("s-abroad").textContent = count("Abroad");
+  $("s-hosp").textContent = count("Hospital");
+
+  document.querySelectorAll("thead th").forEach((th) => {
+    th.dataset.dir = th.dataset.col === sortCol ? sortDir : "";
+  });
+}
+
+function setMeta(text, isErr) {
+  const el = $("meta");
+  el.textContent = text;
+  el.className = "meta" + (isErr ? " err" : "");
+}
+
+async function poll(key, faction, mySession) {
+  try {
+    const res = await fetch(`https://api.torn.com/faction/${encodeURIComponent(faction)}?selections=basic&key=${encodeURIComponent(key)}`);
+    const data = await res.json();
+    if (mySession !== session) return;
+    if (data.error) {
+      setMeta(`API error ${data.error.code}: ${data.error.error}`, true);
+      // Bad/disabled key or insufficient access: stop polling. Rate limit (5) just retries next tick.
+      if ([2, 10, 13, 16, 18].includes(data.error.code)) stop();
+      return;
+    }
+    $("title").textContent = data.name || "Unknown Faction";
+    document.title = `${data.name || "Faction"} — Torn Tracker (Live)`;
+    members = Object.entries(data.members || {}).map(([id, d]) => buildMember(id, d));
+    setMeta(`Updated ${new Date().toLocaleTimeString()} · polling every ${POLL_MS / 1000}s`, false);
+    render();
+  } catch (e) {
+    if (mySession === session) setMeta(`Fetch failed (${e.message}) — retrying`, true);
+  }
+}
+
+function stop() {
+  session++;
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = null;
+}
+
+function start(key, faction) {
+  stop();
+  const s = session;
+  poll(key, faction, s);
+  pollTimer = setInterval(() => poll(key, faction, s), POLL_MS);
+}
+
+$("setup").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const key = e.target.key.value.trim(), faction = e.target.faction.value.trim();
+  store.set("torn_key", key);
+  store.set("torn_faction", faction);
+  start(key, faction);
+});
+
+$("clear").addEventListener("click", () => {
+  store.del("torn_key");
+  stop();
+  $("setup").key.value = "";
+  setMeta("Key forgotten. Enter an API key and enemy faction ID.", false);
+});
+
+document.querySelector("thead").addEventListener("click", (e) => {
+  const th = e.target.closest("th");
+  if (!th) return;
+  const col = th.dataset.col;
+  if (sortCol === col) sortDir = -sortDir; else { sortCol = col; sortDir = 1; }
+  render();
+});
+
+// Faction ID may come from ?f=12345 so the link can be shared; the key never goes in the URL.
+const urlFaction = new URLSearchParams(location.search).get("f");
+const savedKey = store.get("torn_key") || "";
+const savedFaction = urlFaction || store.get("torn_faction") || "";
+$("setup").key.value = savedKey;
+$("setup").faction.value = savedFaction;
+if (savedKey && savedFaction) start(savedKey, savedFaction);
+
+setInterval(() => { if (members.length) render(); }, TICK_MS);
+</script>
+</body>
+</html>
